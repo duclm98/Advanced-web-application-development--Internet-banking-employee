@@ -36,7 +36,7 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function UserProfile() {
+export default function CustomerCreation() {
   const classes = useStyles();
   return (
     <div>

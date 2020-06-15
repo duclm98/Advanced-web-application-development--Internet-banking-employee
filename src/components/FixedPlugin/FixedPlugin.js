@@ -30,7 +30,7 @@ export default function FixedPlugin(props) {
           <i className="fa fa-cog fa-2x" />
         </div>
         <ul className="dropdown-menu">
-          <li className="header-title">SIDEBAR FILTERS</li>
+          <li className="header-title">Cài đặt thanh điều hướng</li>
           <li className="adjustments-line">
             <a className="switch-trigger">
               <div>
@@ -92,7 +92,7 @@ export default function FixedPlugin(props) {
               </div>
             </a>
           </li>
-          <li className="header-title">Images</li>
+          <li className="header-title">Chọn hình nền</li>
           <li className={bgImage === imagine1 ? "active" : ""}>
             <a
               className="img-holder switch-trigger"
@@ -137,42 +137,6 @@ export default function FixedPlugin(props) {
               <img src={imagine4} alt="..." />
             </a>
           </li>
-
-          <li className="button-container">
-            <div className="button-container">
-              <Button
-                color="success"
-                href="https://www.creative-tim.com/product/material-dashboard-react?ref=mdr-fixed-plugin"
-                target="_blank"
-                fullWidth
-              >
-                Download free!
-              </Button>
-            </div>
-          </li>
-          <li className="button-container">
-            <div className="button-container">
-              <Button
-                color="warning"
-                href="https://www.creative-tim.com/product/material-dashboard-pro-react?ref=mdr-fixed-plugin"
-                target="_blank"
-                fullWidth
-              >
-                Get PRO version
-              </Button>
-            </div>
-          </li>
-          <li className="button-container">
-            <Button
-              color="info"
-              fullWidth
-              href="https://demos.creative-tim.com/material-dashboard-react/#/documentation/tutorial?ref=mdr-fixed-plugin"
-              target="_blank"
-            >
-              Documentation
-            </Button>
-          </li>
-          <li className="adjustments-line" />
         </ul>
       </div>
     </div>
