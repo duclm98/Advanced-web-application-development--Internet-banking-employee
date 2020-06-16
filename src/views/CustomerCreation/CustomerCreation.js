@@ -46,7 +46,7 @@ export default function CustomerCreation() {
               <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
-                    labelText="Tên tài khoản"
+                    labelText="Số tài khoản"
                     id="username"
                     formControlProps={{
                       fullWidth: true
