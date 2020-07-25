@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components
@@ -11,13 +12,15 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 
+import { accountAction } from "../../redux";
+
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -26,21 +29,34 @@ const styles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
-  }
+    textDecoration: "none",
+  },
 };
 
 const useStyles = makeStyles(styles);
 
-export default function CustomerCreation() {
+const CustomerCreation = ({ dispatch }) => {
   const classes = useStyles();
+
+  const [input, setInput] = useState({
+    username: "",
+    password: "",
+    email: "",
+    accountNumber: "",
+    accountName: "",
+    phone: "",
+    address: "",
+  });
+
   return (
     <div>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <Card>
-            <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Tạo tài khoản khách hàng</h4>
+            <CardHeader color="warning">
+              <h4 className={classes.cardTitleWhite}>
+                Tạo tài khoản khách hàng
+              </h4>
             </CardHeader>
             <CardBody>
               <GridContainer>
@@ -49,11 +65,22 @@ export default function CustomerCreation() {
                     labelText="Số tài khoản"
                     id="username"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
-                      disabled: true
+                      disabled: true,
                     }}
+                    value={input.accountNumber}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <CustomInput
+                    labelText="Tên khách hàng"
+                    id="name"
+                    formControlProps={{
+                      fullWidth: true,
+                    }}
+                    value={input.accountName}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -61,17 +88,9 @@ export default function CustomerCreation() {
                     labelText="Địa chỉ email"
                     id="email"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Tên"
-                    id="name"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
+                    value={input.email}
                   />
                 </GridItem>
               </GridContainer>
@@ -81,8 +100,9 @@ export default function CustomerCreation() {
                     labelText="Số điện thoại"
                     id="phone"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
+                    value={input.phone}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={8}>
@@ -90,8 +110,9 @@ export default function CustomerCreation() {
                     labelText="Địa chỉ"
                     id="address"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
+                    value={input.address}
                   />
                 </GridItem>
               </GridContainer>
@@ -104,4 +125,11 @@ export default function CustomerCreation() {
       </GridContainer>
     </div>
   );
-}
+};
+
+const mapStateToProps = (state) => {
+  return {
+  };
+};
+
+export default connect(mapStateToProps)(CustomerCreation);
