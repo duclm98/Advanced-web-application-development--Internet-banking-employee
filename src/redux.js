@@ -61,44 +61,48 @@ export const accountAction = {
 };
 
 export const transactionAction = {
-    getMoneyReceivingTransaction: () => async dispatch => {
+    rechargeIntoAccount: (accountNumber, money) => async _ => {
         try {
             const {
                 data
-            } = await instance.get(
-                `transactions/money-receiving`
-            );
-            dispatch({
-                type: "GET_MONEY_RECEIVING_TRANSACTION",
-                payload: data,
+            } = await instance.post(`employees/recharge-into-account`, {
+                accountNumber,
+                money
             });
-        } catch (error) {}
+            return {
+                status: true,
+                data
+            }
+        } catch (error) {
+            let msg = 'Có lỗi trong quá trình tạo tài khoản, vui lòng thử lại!';
+            if (error.response) {
+                msg = error.response.data;
+            }
+            return {
+                status: false,
+                msg
+            }
+        }
     },
-    getMoneySendingTransaction: () => async dispatch => {
-        try {
-            const {
-                data
-            } = await instance.get(
-                `transactions/money-sending`
-            );
-            dispatch({
-                type: "GET_MONEY_SENDING_TRANSACTION",
-                payload: data,
-            });
-        } catch (error) {}
-    },
-    getDebtRemindersTransaction: () => async dispatch => {
-        try {
-            const {
-                data
-            } = await instance.get(
-                `transactions/payment-debt-reminders`
-            );
-            dispatch({
-                type: "GET_DEBT_REMINDERS_TRANSACTION",
-                payload: data,
-            });
-        } catch (error) {}
+    getTransactionHistories: (accountNumberFromBody) => async dispatch => {
+        const accountNumber = accountNumberFromBody ? accountNumberFromBody : "0000000000000";
+        const moneyReceivingTransactions = await instance.get(
+            `employees/transactions/money-receiving/${accountNumber}`
+        );
+        const moneySendingTransactions = await instance.get(
+            `employees/transactions/money-sending/${accountNumber}`
+        );
+        const debtRemindersTransactions = await instance.get(
+            `employees/transactions/payment-debt-reminders/${accountNumber}`
+        );
+        dispatch({
+            type: "TRANSACTION_HISTORY",
+            payload: {
+                moneyReceivingTransactions: moneyReceivingTransactions.data,
+                moneySendingTransactions: moneySendingTransactions.data,
+                debtRemindersTransactions: debtRemindersTransactions.data
+            }
+        });
     },
 };
 
@@ -126,26 +130,13 @@ export default (state = initialState, action) => {
     }
 
     // Reducer cho transaction action
-    else if (action.type === 'GET_MONEY_RECEIVING_TRANSACTION') {
-        console.log(action.payload.data)
+    else if (action.type === 'TRANSACTION_HISTORY') {
         return {
             ...state,
             transactionHistory: {
-                moneyReceivingTransactions: action.payload
-            }
-        }
-    } else if (action.type === 'GET_MONEY_SENDING_TRANSACTION') {
-        return {
-            ...state,
-            transactionHistory: {
-                moneySendingTransactions: action.payload
-            }
-        }
-    } else if (action.type === 'GET_DEBT_REMINDERS_TRANSACTION') {
-        return {
-            ...state,
-            transactionHistory: {
-                debtRemindersTransactions: action.payload
+                moneyReceivingTransactions: action.payload.moneyReceivingTransactions,
+                moneySendingTransactions: action.payload.moneySendingTransactions,
+                debtRemindersTransactions: action.payload.debtRemindersTransactions
             }
         }
     }
