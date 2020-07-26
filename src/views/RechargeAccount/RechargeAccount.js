@@ -12,7 +12,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 
-import { accountAction } from "../../redux";
+import { accountAction, transactionAction } from "../../redux";
 
 const styles = {
   cardCategoryWhite: {
@@ -41,7 +41,9 @@ const RechargeAccount = ({ dispatch }) => {
   const [input, setInput] = useState({
     accountNumber: "",
     accountName: "",
-    money: null,
+    money: "",
+    failedMsg: "",
+    successMsg: "",
   });
 
   useEffect(() => {
@@ -66,7 +68,34 @@ const RechargeAccount = ({ dispatch }) => {
     setAccountName();
   }, [input.accountNumber]);
 
-  const handleRechargeIntoAccounnt = async () => {};
+  const handleRechargeIntoAccounnt = async () => {
+    if (
+      input.accountNumber === "" ||
+      input.accountName === "" ||
+      input.money === ""
+    ) {
+      return setInput((prev) => ({
+        ...prev,
+        failedMsg: "Vui lòng nhập đầy đủ thông tin cần thiết.",
+      }));
+    }
+    const rechargeIntoAccount = await dispatch(
+      transactionAction.rechargeIntoAccount(input.accountNumber, input.money)
+    );
+    if (!rechargeIntoAccount.status) {
+      return setInput((prev) => ({
+        ...prev,
+        failedMsg: rechargeIntoAccount.msg,
+      }));
+    }
+    return setInput({
+      accountNumber: "",
+      accountName: "",
+      money: "",
+      failedMsg: "",
+      successMsg: rechargeIntoAccount.data,
+    });
+  };
 
   return (
     <div>
@@ -120,7 +149,16 @@ const RechargeAccount = ({ dispatch }) => {
                     }}
                     type="number"
                     value={input.money}
+                    onChange={(event) => {
+                      const money = event.target.value;
+                      setInput((prev) => ({
+                        ...prev,
+                        money,
+                      }));
+                    }}
                   />
+                  <h6 style={{ color: "red" }}>{input.failedMsg}</h6>
+                  <h6 style={{ color: "green" }}>{input.successMsg}</h6>
                 </GridItem>
               </GridContainer>
             </CardBody>
