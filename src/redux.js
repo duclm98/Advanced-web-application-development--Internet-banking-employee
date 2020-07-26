@@ -1,13 +1,13 @@
 import instance from "./services/AxiosServices";
 
 export const accountAction = {
-    getAccount: (accountNumberFromBody) => async dispatch => {
+    getAccount: (accountNumberFromBody) => async _ => {
         const accountNumber = accountNumberFromBody ? accountNumberFromBody : "0000000000000";
         try {
             const {
                 data
             } = await instance.get(
-                `accounts/accountNumber/${accountNumber}`
+                `employees/accounts/${accountNumber}`
             );
             return {
                 status: true,
@@ -19,6 +19,45 @@ export const accountAction = {
             }
         }
     },
+    getAccounts: () => async dispatch => {
+        try {
+            const {
+                data
+            } = await instance.get(`employees/accounts`);
+            dispatch({
+                type: 'GET_ACCOUNTS',
+                payload: data
+            })
+            return {
+                status: true,
+                data
+            }
+        } catch (error) {}
+    },
+    createAccount: (account) => async dispatch => {
+        try {
+            const {
+                data
+            } = await instance.post(`employees/accounts`, account);
+            dispatch({
+                type: 'CREATE_ACCOUNT_SUCCESS',
+                payload: data
+            })
+            return {
+                status: true,
+                data
+            }
+        } catch (error) {
+            let msg = 'Có lỗi trong quá trình tạo tài khoản, vui lòng thử lại!';
+            if (error.response) {
+                msg = error.response.data;
+            }
+            return {
+                status: false,
+                msg
+            }
+        }
+    }
 };
 
 export const transactionAction = {
@@ -74,9 +113,15 @@ const initialState = {
 
 export default (state = initialState, action) => {
     // Reducer cho account action
-    if (action.type === "LOGIN_SUCCESS") {
+    if (action.type === 'GET_ACCOUNTS') {
         return {
             ...state,
+            accounts: action.payload
+        }
+    } else if (action.type === "CREATE_ACCOUNT_SUCCESS") {
+        return {
+            ...state,
+            accounts: [...state.accounts, action.payload]
         };
     }
 

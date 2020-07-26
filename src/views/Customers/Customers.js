@@ -12,6 +12,8 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 
+import Table from "./Table.js";
+
 import { accountAction } from "../../redux";
 
 const styles = {
@@ -35,18 +37,31 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-const CustomerCreation = ({ dispatch }) => {
+const Customer = ({ dispatch, accounts }) => {
   const classes = useStyles();
 
   const [input, setInput] = useState({
-    username: "",
-    password: "",
     email: "",
-    accountNumber: "",
     accountName: "",
     phone: "",
     address: "",
   });
+  const [msg, setMsg] = useState("");
+  const [accountGetting, setAccountGetting] = useState(false);
+
+  useEffect(() => {
+    if (!accountGetting) {
+      dispatch(accountAction.getAccounts());
+      setAccountGetting(true);
+    }
+  }, [accountGetting]);
+
+  const handleCreateAccount = async () => {
+    const createAccount = await dispatch(accountAction.createAccount(input));
+    if (createAccount.status === false) {
+      return setMsg(createAccount.msg);
+    }
+  };
 
   return (
     <div>
@@ -55,35 +70,27 @@ const CustomerCreation = ({ dispatch }) => {
           <Card>
             <CardHeader color="warning">
               <h4 className={classes.cardTitleWhite}>
-                Tạo tài khoản khách hàng
+                Quản lý tài khoản khách hàng
               </h4>
             </CardHeader>
             <CardBody>
               <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
+                <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
-                    labelText="Số tài khoản"
-                    id="username"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      disabled: true,
-                    }}
-                    value={input.accountNumber}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Tên khách hàng"
+                    labelText="Tên khách hàng (chữ in không dấu)"
                     id="name"
                     formControlProps={{
                       fullWidth: true,
                     }}
                     value={input.accountName}
+                    onChange={(event) => {
+                      const accountName = event.target.value;
+                      setInput((prev) => ({
+                        ...prev,
+                        accountName,
+                      }));
+                    }}
                   />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="Địa chỉ email"
                     id="email"
@@ -91,11 +98,14 @@ const CustomerCreation = ({ dispatch }) => {
                       fullWidth: true,
                     }}
                     value={input.email}
+                    onChange={(event) => {
+                      const email = event.target.value;
+                      setInput((prev) => ({
+                        ...prev,
+                        email,
+                      }));
+                    }}
                   />
-                </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="Số điện thoại"
                     id="phone"
@@ -103,9 +113,14 @@ const CustomerCreation = ({ dispatch }) => {
                       fullWidth: true,
                     }}
                     value={input.phone}
+                    onChange={(event) => {
+                      const phone = event.target.value;
+                      setInput((prev) => ({
+                        ...prev,
+                        phone,
+                      }));
+                    }}
                   />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={8}>
                   <CustomInput
                     labelText="Địa chỉ"
                     id="address"
@@ -113,13 +128,27 @@ const CustomerCreation = ({ dispatch }) => {
                       fullWidth: true,
                     }}
                     value={input.address}
+                    onChange={(event) => {
+                      const address = event.target.value;
+                      setInput((prev) => ({
+                        ...prev,
+                        address,
+                      }));
+                    }}
+                  />
+                  <h6 style={{ color: "red" }}>{msg}</h6>
+                  <Button color="primary" onClick={handleCreateAccount}>
+                    Tạo tài khoản
+                  </Button>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={9}>
+                  <Table
+                    rows={accounts || []}
                   />
                 </GridItem>
               </GridContainer>
             </CardBody>
-            <CardFooter>
-              <Button color="primary">Tạo tài khoản</Button>
-            </CardFooter>
+            <CardFooter></CardFooter>
           </Card>
         </GridItem>
       </GridContainer>
@@ -129,7 +158,8 @@ const CustomerCreation = ({ dispatch }) => {
 
 const mapStateToProps = (state) => {
   return {
+    accounts: state.accounts,
   };
 };
 
-export default connect(mapStateToProps)(CustomerCreation);
+export default connect(mapStateToProps)(Customer);
