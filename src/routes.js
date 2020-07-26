@@ -16,28 +16,20 @@
 
 */
 // @material-ui/icons
-import Create from "@material-ui/icons/CreateOutlined";
 import History from "@material-ui/icons/HistoryOutlined";
 import Add from "@material-ui/icons/Add";
 import LibraryBooks from "@material-ui/icons/LibraryBooks";
 
-import CustomersListPage from 'views/CustomersList/CustomersList.js';
-import CustomerCreationPage from 'views/CustomerCreation/CustomerCreation.js';
+import CustomersPage from 'views/Customers/Customers.js';
 import RechargeAccountPage from 'views/RechargeAccount/RechargeAccount.js';
 import TransactionHistoryPage from 'views/TransactionHistory/TransactionHistory.js';
 
 const dashboardRoutes = [
   {
-    path: "/customers-list",
+    path: "/customers",
     name: "Danh sách khách hàng",
     icon: LibraryBooks,
-    component: CustomersListPage,
-  },
-  {
-    path: "/customer-creation",
-    name: "Taọ tài khoản khách hàng",
-    icon: Create,
-    component: CustomerCreationPage,
+    component: CustomersPage,
   },
   {
     path: "/recharge-account",

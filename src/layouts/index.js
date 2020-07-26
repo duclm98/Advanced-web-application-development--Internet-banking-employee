@@ -31,7 +31,7 @@ const switchRoutes = (
         />
       );
     })}
-    <Redirect from="/" to="/customers-list" />
+    <Redirect from="/" to="/customers" />
   </Switch>
 );
 
