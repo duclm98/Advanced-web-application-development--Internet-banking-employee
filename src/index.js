@@ -24,7 +24,7 @@ import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 
 // core components
-import Admin from "layouts";
+import layout from "layouts";
 
 import "assets/css/material-dashboard-react.css?v=1.9.0";
 
@@ -38,7 +38,7 @@ ReactDOM.render(
     <Provider store={store}>
       <Router history={hist}>
         <Switch>
-          <Route path="/" component={Admin} />
+          <Route path="/" component={layout} />
           <Redirect from="/" to="/customers" />
         </Switch>
       </Router>

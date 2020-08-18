@@ -1,4 +1,82 @@
+import * as localStorageVariable from "./variables/LocalStorage";
 import instance from "./services/AxiosServices";
+
+// Lấy lại access token sau mỗi 9 phút (vì thời gian tồn tại tối đa của access token la 10 phút)
+const getRefreshToken = async () => {
+    instance.defaults.headers.common["x_authorization"] = localStorage.getItem(
+        localStorageVariable.storeAccessToken
+    );
+    try {
+        const {
+            data
+        } = await instance.post("employees/refresh", {
+            refreshToken: localStorage.getItem(
+                localStorageVariable.storeRefreshToken
+            ),
+        });
+        localStorage.setItem(
+            localStorageVariable.storeAccessToken,
+            data.accessToken
+        );
+    } catch (error) {
+        console.log("Không tìm thấy access token mới.");
+    }
+};
+getRefreshToken();
+setInterval(getRefreshToken, 540000);
+
+export const employeeAction = {
+    login: (account) => async (dispatch) => {
+        instance.defaults.headers.common["x_authorization"] = localStorage.getItem(
+            localStorageVariable.storeAccessToken
+        );
+
+        try {
+            const {
+                data
+            } = await instance.post("employees/login", account);
+
+            localStorage.setItem(
+                localStorageVariable.storeAccessToken,
+                data.accessToken
+            );
+            localStorage.setItem(
+                localStorageVariable.storeRefreshToken,
+                data.refreshToken
+            );
+            localStorage.setItem(
+                localStorageVariable.storeEmployee,
+                JSON.stringify(data.employee)
+            );
+
+            dispatch({
+                type: "LOGIN_SUCCESS",
+                payload: data,
+            });
+
+            return {
+                status: true
+            }
+        } catch (error) {
+            let msg = "Có lỗi xảy ra, vui lòng thử lại.";
+            if (error.response) {
+                msg = error.response.data;
+            }
+
+            return {
+                status: false,
+                msg
+            }
+        }
+    },
+    logout: () => (dispatch) => {
+        localStorage.clear();
+
+        dispatch({
+            type: "LOGOUT",
+        });
+    },
+}
 
 export const accountAction = {
     getAccount: (accountNumberFromBody) => async _ => {
@@ -107,6 +185,9 @@ export const transactionAction = {
 };
 
 const initialState = {
+    accessToken: localStorage.getItem(localStorageVariable.storeAccessToken),
+    refreshToken: localStorage.getItem(localStorageVariable.storeRefreshToken),
+    employee: localStorage.getItem(localStorageVariable.storeEmployee),
     accounts: [],
     transactionHistory: {
         moneyReceivingTransactions: [],
@@ -116,8 +197,24 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
+    // Reducer cho employee action
+    if(action.type==='LOGIN_SUCCESS'){
+        return {
+            ...state,
+            accessToken: action.payload.accessToken,
+            refreshToken: action.payload.refreshToken,
+            employee: action.payload.employee
+        };
+    } else if (action.type === "LOGOUT") {
+        return {
+            ...state,
+            accessToken: null,
+            refreshToken: null,
+            employee: null,
+        };
+    }
     // Reducer cho account action
-    if (action.type === 'GET_ACCOUNTS') {
+    else if (action.type === 'GET_ACCOUNTS') {
         return {
             ...state,
             accounts: action.payload
