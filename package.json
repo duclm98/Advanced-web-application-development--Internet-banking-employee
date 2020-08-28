@@ -35,6 +35,7 @@
   "scripts": {
     "dev": "env-cmd -f .env.development react-scripts start",
     "start": "env-cmd -f .env.production react-scripts start",
+    "jenkins": "env-cmd -f .env.production.jenkins react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
