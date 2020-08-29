@@ -14,3 +14,6 @@
 ## URL
 ### Môi trường production (Heroku): https://internet-banking-employee.herokuapp.com/
 ### Môi trường production (Jenkins): http://34.92.149.125:3002
+## Tài khoản demo
+1. Username: employee
+2. Password: 90446
